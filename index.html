@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生涯尋常日 - 12型興趣探索海報</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f3f4f6;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* 螢幕預覽用容器 */
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        /* 導覽與控制列 */
+        .controls {
+            background-color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            z-index: 50;
+        }
+
+        select, button {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #4338ca; }
+
+        /* 海報本體 (A4 比例) */
+        .poster-page {
+            width: 100%;
+            max-width: 794px; /* A4 寬度參考 */
+            aspect-ratio: 1 / 1.414;
+            background-color: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bg-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(currentColor 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.04;
+            z-index: 0;
+        }
+
+        /* 列印模式設定 */
+        @media print {
+            body { background-color: #ffffff; padding: 0; }
+            .controls { display: none !important; } /* 隱藏控制列 */
+            #app-container { gap: 0; padding: 0; }
+            .poster-page { 
+                box-shadow: none; 
+                border-radius: 0; 
+                page-break-after: always; /* 強制每一張新頁面 */
+                width: 100vw;
+                height: 100vh;
+                max-width: none;
+                aspect-ratio: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部控制列 (列印時會隱藏) -->
+    <div class="controls no-print flex-wrap justify-center w-full max-w-4xl mx-auto mt-5">
+        <span class="font-bold text-gray-700">👀 預覽切換：</span>
+        <select id="type-selector" onchange="renderSpecific(this.value)">
+            <option value="all">顯示全部 12 型 (準備列印)</option>
+            <option value="01">01 研究型</option>
+            <option value="02" selected>02 內省型</option>
+            <option value="03">03 創作型</option>
+            <option value="04">04 社會型</option>
+            <option value="05">05 感官型</option>
+            <option value="06">06 操作型</option>
+            <option value="07">07 事務型</option>
+            <option value="08">08 商業型</option>
+            <option value="09">09 主導型</option>
+            <option value="10">10 業務型</option>
+            <option value="11">11 服務型</option>
+            <option value="12">12 自然型</option>
+        </select>
+        <button onclick="window.print()">🖨️ 列印 A4 海報</button>
+        <p class="text-sm text-gray-500 w-full text-center mt-2">提示：點擊列印時，系統會自動將每張海報分開印成單獨一頁喔！</p>
+    </div>
+
+    <!-- 海報生成容器 -->
+    <div id="app-container"></div>
+
+    <script>
+        // ==========================================
+        // 老師您好！如果要新增後續的內容，請直接修改這個 data 陣列！
+        // ==========================================
+        const data = [
+            {
+                id: "01",
+                name: "研究型",
+                english: "Investigative",
+                quote: "「偏向喜歡動腦與學習的活動，用以發現趨勢或現象。」",
+                color: "blue",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />',
+                voices: [
+                    "「根據資料顯示...」",
+                    "「依照邏輯來說...」",
+                    "「這個現象背後的原理是...」"
+                ],
+                strengths: [
+                    "擁有像是一部高速處理器、高容量的電腦腦袋",
+                    "喜歡根據客觀資料與知識，形成推理或邏輯思考",
+                    "重視資料蒐集、分析與理解來解決複雜的問題",
+                    "能藉由研究與思考來解決問題，獲得極大成就感"
+                ],
+                blindSpots: [
+                    "因為太過理性認真，有時令人覺得過於冷漠、嚴謹。",
+                    "較少情感流露的一面，容易與他人產生距離感。",
+                    "明顯不足時，容易忽略實事求是、理性分析的重要性。"
+                ],
+                careers: ["軟體開發/程式工程師", "學術研究員/教授", "大數據分析員/金融分析", "醫師/藥師/鑑識人員", "心理測量/考古/人類學"]
+            },
+            {
+                id: "02",
+                name: "內省型",
+                english: "Reflective",
+                quote: "「看透人生的隱居智者，尋找生命意義的靈魂旅人。」",
+                color: "purple",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />',
+                voices: [
+                    "「做這件事情的意義是什麼？」",
+                    "「我有一種直覺...」",
+                    "旁人常說：「你想得真的好多喔！」"
+                ],
+                strengths: [
+                    "重視精神滿足大於物質需求",
+                    "擅長看見現象背後的「意義」",
+                    "具備連結不同層次的抽象思考力",
+                    "能敏銳觀察並理解他人的內在感受"
+                ],
+                blindSpots: [
+                    "太強調感受，忽略了客觀現實。",
+                    "過度鑽牛角尖，陷入情緒糾結。",
+                    "思考意義太久，反而停滯不前。"
+                ],
+                careers: ["哲學/社會/心理學家", "身心靈工作者/諮商師", "宗教/教會服務", "生命禮儀/殯葬相關", "藝術/音樂/冒險治療", "命理/風水/占星"]
+            },
+            {
+                id: "03",
+                name: "創作型",
+                english: "Artistic",
+                quote: "「用獨特的眼光詮釋世界，把想像力化為現實的魔法師。」",
+                color: "rose",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />',
+                voices: ["「這樣搭配我覺得滿好的！」", "「我不喜歡跟別人一樣！」", "「就讓我隨興發揮一下啦～」"],
+                strengths: ["像是一台發電機，能提供無數的新點子", "不按牌理出牌，討厭被制式的規定給綁死", "有強烈的個人風格，無法接受缺乏美感的事物", "比起做例行性的工作，更喜歡做創造性的事情"],
+                blindSpots: ["太相信自己的感覺，有時容易變得主觀、固執。", "做事隨性，有時較缺乏規劃及現實感。", "較缺乏執行與落實的延續力。"],
+                careers: ["設計師/音樂/文字創作", "電影/動畫製作/編劇", "廚師/烘焙/手藝創作", "廣告文案/企劃行銷", "花藝/芳療/彩妝師"]
+            },
+            {
+                id: "04",
+                name: "社會型",
+                english: "Social",
+                quote: "「溫暖陪伴的點燈人，樂於協助他人成長與發展。」",
+                color: "orange",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />',
+                voices: ["「大家覺得怎麼樣呢？」", "「你需要幫忙嗎？」", "「我能體會你的感受...」"],
+                strengths: ["像是一座溫暖的避風港，令人覺得安心", "具備高度同理心與耐心，能關懷別人的處境", "喜歡與人接觸，對別人的情緒與反應有敏銳的觀察", "擅長溝通協調、教導與分享，希望大家都好"],
+                blindSpots: ["太顧慮別人感受，容易把委屈往肚子裡吞。", "容易受到別人情緒起伏的影響，導致心情波動。", "經常忘記自己的需要與底線。"],
+                careers: ["心理諮商/助人工作者", "教育/幼保人員", "醫護/長照人員", "社會福利/志工", "教育訓練與人資", "休閒旅遊/導遊"]
+            },
+            {
+                id: "05",
+                name: "感官型",
+                english: "Sensory",
+                quote: "「敏銳捕捉感官體驗，品味生活細節的美學家。」",
+                color: "amber",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />',
+                voices: ["「這個味道/聲音太棒了！」", "「這摸起來的質感真好...」", "「讓我們去體驗看看吧！」"],
+                strengths: ["像是最靈敏的雷達，對周遭變化很敏銳", "能夠在日常生活中察覺美好的細節與事物", "善於運用視覺、聽覺、嗅覺、味覺或觸覺來記憶", "喜歡動手做、體驗、享受各種感官帶來的快樂"],
+                blindSpots: ["因為對感官刺激敏銳，有時容易感到疲憊或不適。", "太過依賴感覺，可能會忽略客觀現實與邏輯。", "容易沉浸在某些感官享受中，忘了其他重要的事情。"],
+                careers: ["調酒/咖啡/品茶師", "芳療/香水調香師", "廚師/烘焙/餐飲", "音樂/音效/配音員", "美容/美髮/彩妝師", "空間/室內設計"]
+            },
+            {
+                id: "06",
+                name: "操作型",
+                english: "Realistic",
+                quote: "「喜歡動手解決問題，穩紮穩打的實踐派。」",
+                color: "slate",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />',
+                voices: ["「直接動手做看看比較快！」", "「這個東西的構造是怎樣？」", "「這有什麼實質的作用？」"],
+                strengths: ["像是一把萬能的瑞士刀，實用又可靠", "相對於複雜的人際互動，更喜歡與物品或大自然相處", "善於動手操作工具或機械，將理論化為實物", "行事風格踏實、講求實效，能一步一腳印完成任務"],
+                blindSpots: ["習慣直線思考，有時顯得不夠靈活變通。", "對於抽象理論或感性溝通較沒耐心。", "遇到人際衝突時，容易選擇逃避或生悶氣。"],
+                careers: ["機械/電子工程師", "汽機車維修/水電", "農業/園藝/畜牧", "運動員/體力勞動", "軍警消/保全人員", "廚師/手工藝匠"]
+            },
+            {
+                id: "07",
+                name: "事務型",
+                english: "Conventional",
+                quote: "「精準仔細的秩序維護者，讓一切井然有序的推手。」",
+                color: "teal",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />',
+                voices: ["「有沒有標準流程可以參考？」", "「細節一定要再三確認！」", "「我已經把它歸類整理好了。」"],
+                strengths: ["像是一本精密的萬用手冊，條理分明", "善於處理文書、數字與細節，出錯率極低", "喜歡有明確的規則與流程可以依循", "具有高度的責任感與忠誠度，是不可或缺的後勤支援"],
+                blindSpots: ["過於依賴規則，遇到突發狀況時容易不知所措。", "有時會為了追求完美，在細節上花費過多時間。", "不習慣為自己爭取權益，容易成為默默付出的阿信。"],
+                careers: ["會計/財務/稽核", "行政/秘書/助理", "公務員/郵政/銀行員", "資料處理/品管", "倉管/物流/採購"]
+            },
+            {
+                id: "08",
+                name: "商業型",
+                english: "Commercial",
+                quote: "「眼光精準的機會獵人，在市場中創造價值的策展人。」",
+                color: "emerald",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />',
+                voices: ["「這背後有多少潛在價值？」", "「我們要怎麼創造雙贏？」", "「這個投資報酬率如何？」"],
+                strengths: ["像是一個敏銳的探測器，能嗅出商機與價值", "對於金錢、市場趨勢與數字有極高的敏銳度", "善於資源整合與談判，為自己或團隊爭取最大利益", "具備商業頭腦，敢於嘗試並承擔風險"],
+                blindSpots: ["太看重利益，有時會讓人覺得過於現實或功利。", "為了達到目標，可能會忽略他人的感受或道德風險。", "容易在追求外在成就的過程中，感到焦慮與壓力。"],
+                careers: ["投資理財/金融業", "企業家/創業者", "行銷/企劃/公關", "房仲/保險/業務", "電商/採購/批發"]
+            },
+            {
+                id: "09",
+                name: "主導型",
+                english: "Enterprising",
+                quote: "「帶領團隊衝鋒陷陣，充滿影響力的天生領袖。」",
+                color: "red",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />',
+                voices: ["「聽我的就對了！」", "「這件事就交給我來處理！」", "「我們接下來的目標是...」"],
+                strengths: ["像是天生的領袖，自帶氣場與說服力，能帶領團隊前進", "勇於承擔責任與風險，在關鍵時刻能果斷做出決策", "享受挑戰與競爭，越挫越勇，不容易被困難打倒", "擅長整合資源、發號施令，讓事情順利推動與完成"],
+                blindSpots: ["因為太想掌控全局，有時會顯得強勢、不容質疑。", "目標導向，容易忽略旁人的感受與情緒。", "不擅長當跟隨者，若缺乏舞台會感到非常痛苦。"],
+                careers: ["企業主管/經理人", "政治人物/民意代表", "創業家/專案負責人", "導演/製作人", "意見領袖/公眾人物"]
+            },
+            {
+                id: "10",
+                name: "業務型",
+                english: "Promotional",
+                quote: "「善於溝通與說服，將好東西推廣出去的熱情大使。」",
+                color: "indigo",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />',
+                voices: ["「這個真的很不錯喔！」", "「我們來交個朋友吧！」", "「只要你相信我...」"],
+                strengths: ["像是一塊人際磁鐵，很容易跟人拉近距離、建立關係", "具備絕佳的口才與說服力，能把理念或產品推銷出去", "充滿熱情與活力，不怕被拒絕，挫折恢復力極快", "懂得察言觀色，能快速掌握對方的需求與喜好"],
+                blindSpots: ["為了達成業績或目的，有時會讓人覺得太過油條或不夠真誠。", "容易把焦點放在外在成就，忽略了內在的平靜與充實。", "常常需要向外尋求肯定，心情容易受別人評價影響。"],
+                careers: ["銷售人員/業務代表", "公關/行銷企劃", "直播主/YouTuber", "房仲/保險經紀人", "募款/推廣大使"]
+            },
+            {
+                id: "11",
+                name: "服務型",
+                english: "Serving",
+                quote: "「體貼入微的照顧者，以提供優質體驗為傲的守護者。」",
+                color: "cyan",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
+                voices: ["「有什麼需要幫忙的嗎？」", "「看到你開心我就覺得值得了。」", "「別客氣，這是我應該做的。」"],
+                strengths: ["像是一位貼心管家，總能敏銳察覺並滿足別人的需要", "樂於付出與奉獻，在幫助別人的過程中獲得極大成就感", "具有極高的親和力與耐心，能妥善安撫他人的情緒", "把「讓人感到舒適、滿意」視為最高指導原則"],
+                blindSpots: ["習慣把別人的需求擺在第一位，經常委屈了自己。", "不懂得拒絕，容易承擔過多責任而導致身心俱疲。", "當付出沒有得到相對應的感謝時，容易感到失落與受傷。"],
+                careers: ["航空空服員/地勤", "飯店/餐飲服務人員", "客服人員/秘書", "護理/照服/保母", "社工/志工/非營利組織"]
+            },
+            {
+                id: "12",
+                name: "自然型",
+                english: "Naturalistic",
+                quote: "「與大地萬物共鳴，在自然與生態中尋找真理的觀察家。」",
+                color: "lime",
+                iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />',
+                voices: ["「好想去親近大自然喔！」", "「這隻小動物真的好可愛！」", "「我們應該好好保護地球。」"],
+                strengths: ["像是一棵行光合作用的大樹，在自然環境中能迅速充飽電", "對動植物、生態與環境保護有著天生的熱忱與使命感", "喜歡在戶外走動、動手勞動，享受與大地連結的踏實感", "具備敏銳的觀察力，能察覺自然界微小的變化與規律"],
+                blindSpots: ["在過度擁擠、吵雜或人造的環境中，容易感到窒息與焦慮。", "相對不擅長處理複雜的人際政治與心機算計。", "有時會為了堅持環保或生態理念，顯得較為固執不妥協。"],
+                careers: ["獸醫/動物保育員", "農業/園藝/林業", "生態解說/國家公園巡山員", "戶外嚮導/探險家", "海洋/地質/環境研究員"]
+            }
+        ];
+
+        //  Tailwind 顏色配置對應表 (為了讓CDN引擎識別，必須完整寫出 class 名稱)
+        const themeMap = {
+            blue: { bg: 'bg-blue-900', border: 'border-blue-500', textLight: 'text-blue-300', textDark: 'text-blue-800', bgLight: 'bg-blue-50', borderLight: 'border-blue-100', iconBg: 'bg-blue-700', iconBorder: 'border-blue-400', bullet: 'text-blue-500', textMain: 'text-blue-700', bgTag: 'bg-blue-100', textTag: 'text-blue-800' },
+            purple: { bg: 'bg-purple-900', border: 'border-purple-500', textLight: 'text-purple-300', textDark: 'text-purple-800', bgLight: 'bg-purple-50', borderLight: 'border-purple-100', iconBg: 'bg-purple-700', iconBorder: 'border-purple-400', bullet: 'text-purple-500', textMain: 'text-purple-700', bgTag: 'bg-purple-100', textTag: 'text-purple-800' },
+            rose: { bg: 'bg-rose-900', border: 'border-rose-500', textLight: 'text-rose-300', textDark: 'text-rose-800', bgLight: 'bg-rose-50', borderLight: 'border-rose-100', iconBg: 'bg-rose-700', iconBorder: 'border-rose-400', bullet: 'text-rose-500', textMain: 'text-rose-700', bgTag: 'bg-rose-100', textTag: 'text-rose-800' },
+            orange: { bg: 'bg-orange-900', border: 'border-orange-500', textLight: 'text-orange-300', textDark: 'text-orange-800', bgLight: 'bg-orange-50', borderLight: 'border-orange-100', iconBg: 'bg-orange-700', iconBorder: 'border-orange-400', bullet: 'text-orange-500', textMain: 'text-orange-700', bgTag: 'bg-orange-100', textTag: 'text-orange-800' },
+            amber: { bg: 'bg-amber-900', border: 'border-amber-500', textLight: 'text-amber-300', textDark: 'text-amber-800', bgLight: 'bg-amber-50', borderLight: 'border-amber-100', iconBg: 'bg-amber-700', iconBorder: 'border-amber-400', bullet: 'text-amber-500', textMain: 'text-amber-700', bgTag: 'bg-amber-100', textTag: 'text-amber-800' },
+            slate: { bg: 'bg-slate-900', border: 'border-slate-500', textLight: 'text-slate-300', textDark: 'text-slate-800', bgLight: 'bg-slate-50', borderLight: 'border-slate-100', iconBg: 'bg-slate-700', iconBorder: 'border-slate-400', bullet: 'text-slate-500', textMain: 'text-slate-700', bgTag: 'bg-slate-100', textTag: 'text-slate-800' },
+            teal: { bg: 'bg-teal-900', border: 'border-teal-500', textLight: 'text-teal-300', textDark: 'text-teal-800', bgLight: 'bg-teal-50', borderLight: 'border-teal-100', iconBg: 'bg-teal-700', iconBorder: 'border-teal-400', bullet: 'text-teal-500', textMain: 'text-teal-700', bgTag: 'bg-teal-100', textTag: 'text-teal-800' },
+            emerald: { bg: 'bg-emerald-900', border: 'border-emerald-500', textLight: 'text-emerald-300', textDark: 'text-emerald-800', bgLight: 'bg-emerald-50', borderLight: 'border-emerald-100', iconBg: 'bg-emerald-700', iconBorder: 'border-emerald-400', bullet: 'text-emerald-500', textMain: 'text-emerald-700', bgTag: 'bg-emerald-100', textTag: 'text-emerald-800' },
+            red: { bg: 'bg-red-900', border: 'border-red-500', textLight: 'text-red-300', textDark: 'text-red-800', bgLight: 'bg-red-50', borderLight: 'border-red-100', iconBg: 'bg-red-700', iconBorder: 'border-red-400', bullet: 'text-red-500', textMain: 'text-red-700', bgTag: 'bg-red-100', textTag: 'text-red-800' },
+            indigo: { bg: 'bg-indigo-900', border: 'border-indigo-500', textLight: 'text-indigo-300', textDark: 'text-indigo-800', bgLight: 'bg-indigo-50', borderLight: 'border-indigo-100', iconBg: 'bg-indigo-700', iconBorder: 'border-indigo-400', bullet: 'text-indigo-500', textMain: 'text-indigo-700', bgTag: 'bg-indigo-100', textTag: 'text-indigo-800' },
+            cyan: { bg: 'bg-cyan-900', border: 'border-cyan-500', textLight: 'text-cyan-300', textDark: 'text-cyan-800', bgLight: 'bg-cyan-50', borderLight: 'border-cyan-100', iconBg: 'bg-cyan-700', iconBorder: 'border-cyan-400', bullet: 'text-cyan-500', textMain: 'text-cyan-700', bgTag: 'bg-cyan-100', textTag: 'text-cyan-800' },
+            lime: { bg: 'bg-lime-900', border: 'border-lime-500', textLight: 'text-lime-300', textDark: 'text-lime-800', bgLight: 'bg-lime-50', borderLight: 'border-lime-100', iconBg: 'bg-lime-700', iconBorder: 'border-lime-400', bullet: 'text-lime-500', textMain: 'text-lime-700', bgTag: 'bg-lime-100', textTag: 'text-lime-800' },
+        };
+
+        const renderPosterHTML = (item) => {
+            const t = themeMap[item.color] || themeMap['slate'];
+            
+            // 語錄渲染
+            const voicesHTML = item.voices.map(voice => 
+                `<span class="bg-white px-4 py-2 rounded-full ${t.textMain} shadow-sm font-medium border border-gray-100">${voice}</span>`
+            ).join('');
+
+            // 優勢渲染
+            const strengthsHTML = item.strengths.map(strength => 
+                `<li class="flex items-start"><span class="${t.bullet} mr-2 mt-0.5">✦</span> <span>${strength}</span></li>`
+            ).join('');
+
+            // 盲點渲染
+            const blindSpotsHTML = item.blindSpots.map(bs => 
+                `<li class="flex items-start"><span class="text-orange-400 mr-2 mt-0.5">▸</span> <span>${bs}</span></li>`
+            ).join('');
+
+            // 職業渲染
+            const careersHTML = item.careers.map(career => 
+                `<span class="${t.bgTag} ${t.textTag} px-3 py-1.5 rounded-md font-semibold">${career}</span>`
+            ).join('');
+
+            return `
+            <div class="poster-page text-${item.color}-900">
+                <div class="bg-pattern text-${item.color}-500"></div>
+                
+                <!-- 標題區塊 -->
+                <div class="${t.bg} text-white p-8 relative z-10 rounded-t-xl border-b-8 ${t.border}">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="${t.textLight} font-bold tracking-widest text-lg">TYPE ${item.id}</span>
+                            <h1 class="text-5xl font-black mt-2 tracking-wide">${item.name} <span class="text-3xl font-medium ${t.textLight} ml-2 opacity-80">${item.english}</span></h1>
+                            <p class="mt-4 text-white text-lg opacity-90">${item.quote}</p>
+                        </div>
+                        <div class="w-24 h-24 ${t.iconBg} rounded-full flex items-center justify-center border-4 ${t.iconBorder} shadow-lg flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                ${item.iconPath}
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 主要內容區 -->
+                <div class="flex-grow p-8 relative z-10 flex flex-col gap-6">
+                    
+                    <!-- 共鳴語錄 -->
+                    <div class="${t.bgLight} rounded-lg p-5 border ${t.borderLight}">
+                        <h2 class="text-xl font-bold ${t.textDark} mb-3 flex items-center">
+                            <span class="mr-2">💬</span> 你的內心常出現這些聲音嗎？
+                        </h2>
+                        <div class="flex flex-wrap gap-3">
+                            ${voicesHTML}
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-6">
+                        <!-- 核心特質 -->
+                        <div class="bg-white border-2 border-gray-100 rounded-xl p-5 shadow-sm">
+                            <h2 class="text-xl font-bold ${t.textDark} mb-3 border-b-2 ${t.borderLight} pb-2">✨ 你的超能力</h2>
+                            <ul class="space-y-2 text-gray-700 font-medium">
+                                ${strengthsHTML}
+                            </ul>
+                        </div>
+
+                        <!-- 盲點防空洞 -->
+                        <div class="bg-white border-2 border-orange-100 rounded-xl p-5 shadow-sm">
+                            <h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-100 pb-2">⚠️ 盲點防空洞</h2>
+                            <p class="text-gray-700 font-medium mb-2 text-sm">當過度發揮時，你可能會：</p>
+                            <ul class="space-y-2 text-gray-700">
+                                ${blindSpotsHTML}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 職業領域 -->
+                    <div>
+                        <h2 class="text-xl font-bold ${t.textDark} mb-3 flex items-center">
+                            <span class="mr-2">🧭</span> 相關探索領域
+                        </h2>
+                        <div class="flex flex-wrap gap-2 text-sm">
+                            ${careersHTML}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 互動任務區 -->
+                <div class="bg-yellow-50 border-t-4 border-yellow-400 p-6 relative z-10 mt-auto">
+                    <div class="flex items-start gap-4">
+                        <div class="bg-yellow-400 text-yellow-900 rounded-full w-12 h-12 flex items-center justify-center font-black text-xl flex-shrink-0">
+                            任務
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-yellow-800 text-lg mb-2">如果你在「${item.name}」得分最高，請在 A4 紙上寫下：</h3>
+                            <ol class="list-decimal list-inside text-gray-800 space-y-2 font-medium">
+                                <li>標題寫上大大的 <span class="${t.textMain} font-bold">「${item.id} ${item.name}」</span></li>
+                                <li>從「你的超能力」中，抄寫一句你最喜歡的特質。</li>
+                                <li>從「盲點防空洞」中，寫下一個你需要時常提醒自己的盲點。</li>
+                                <li>從「相關探索領域」中，挑選 1~2 個你覺得最新奇或感興趣的職業。</li>
+                                <li><strong>思考題：</strong>最近有哪件事讓你覺得「很有意義」？用一句話記錄下來。</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        const container = document.getElementById('app-container');
+
+        // 渲染指定的類型，或全部渲染
+        window.renderSpecific = (val) => {
+            container.innerHTML = '';
+            if (val === 'all') {
+                data.forEach(item => {
+                    container.innerHTML += renderPosterHTML(item);
+                });
+            } else {
+                const target = data.find(item => item.id === val);
+                if(target) {
+                    container.innerHTML = renderPosterHTML(target);
+                }
+            }
+        };
+
+        // 初始載入 02 內省型 (預設選項)
+        renderSpecific('02');
+
+    </script>
+</body>
+</html>
