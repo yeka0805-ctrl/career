@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生涯尋常日 - 12型興趣探索海報</title>
+    <title>生涯尋常日 - 12型興趣探索海報 (A3 右側留白版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Noto Sans TC', sans-serif;
@@ -14,7 +14,6 @@
             padding: 0;
         }
         
-        /* 螢幕預覽用容器 */
         #app-container {
             display: flex;
             flex-direction: column;
@@ -23,7 +22,6 @@
             gap: 40px;
         }
 
-        /* 導覽與控制列 */
         .controls {
             background-color: #ffffff;
             padding: 15px 30px;
@@ -56,16 +54,16 @@
 
         button:hover { background-color: #4338ca; }
 
-        /* 海報本體 (A4 比例) */
+        /* 海報本體 (A3 比例) */
         .poster-page {
             width: 100%;
-            max-width: 794px; /* A4 寬度參考 */
+            max-width: 1123px; /* A3 寬度 */
             aspect-ratio: 1 / 1.414;
             background-color: #ffffff;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
             position: relative;
             overflow: hidden;
-            border-radius: 0.75rem;
+            border-radius: 1rem;
             display: flex;
             flex-direction: column;
         }
@@ -76,21 +74,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: radial-gradient(currentColor 1px, transparent 1px);
-            background-size: 20px 20px;
+            background-image: radial-gradient(currentColor 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
             opacity: 0.04;
             z-index: 0;
         }
 
-        /* 列印模式設定 */
         @media print {
             body { background-color: #ffffff; padding: 0; }
-            .controls { display: none !important; } /* 隱藏控制列 */
+            .controls { display: none !important; }
             #app-container { gap: 0; padding: 0; }
             .poster-page { 
                 box-shadow: none; 
                 border-radius: 0; 
-                page-break-after: always; /* 強制每一張新頁面 */
+                page-break-after: always;
                 width: 100vw;
                 height: 100vh;
                 max-width: none;
@@ -101,9 +98,8 @@
 </head>
 <body>
 
-    <!-- 頂部控制列 (列印時會隱藏) -->
     <div class="controls no-print flex-wrap justify-center w-full max-w-4xl mx-auto mt-5">
-        <span class="font-bold text-gray-700">👀 預覽切換：</span>
+        <span class="font-bold text-gray-700">👀 預覽切換 (A3 右側留白版)：</span>
         <select id="type-selector" onchange="renderSpecific(this.value)">
             <option value="all">顯示全部 12 型 (準備列印)</option>
             <option value="01">01 研究型</option>
@@ -119,16 +115,15 @@
             <option value="11">11 服務型</option>
             <option value="12">12 自然型</option>
         </select>
-        <button onclick="window.print()">🖨️ 列印 A4 海報</button>
-        <p class="text-sm text-gray-500 w-full text-center mt-2">提示：點擊列印時，系統會自動將每張海報分開印成單獨一頁喔！</p>
+        <button onclick="window.print()">🖨️ 列印 A3 海報</button>
+        <p class="text-sm text-gray-500 w-full text-center mt-2">優化版面分配，職業欄位變成窄方形，右側保留約 9*8 cm 留白。列印時請設定「A3紙張、無邊界、顯示背景圖形」。</p>
     </div>
 
-    <!-- 海報生成容器 -->
     <div id="app-container"></div>
 
     <script>
         // ==========================================
-        // 老師您好！如果要新增後續的內容，請直接修改這個 data 陣列！
+        // 12型資料庫
         // ==========================================
         const data = [
             {
@@ -138,22 +133,9 @@
                 quote: "「偏向喜歡動腦與學習的活動，用以發現趨勢或現象。」",
                 color: "blue",
                 iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />',
-                voices: [
-                    "「根據資料顯示...」",
-                    "「依照邏輯來說...」",
-                    "「這個現象背後的原理是...」"
-                ],
-                strengths: [
-                    "擁有像是一部高速處理器、高容量的電腦腦袋",
-                    "喜歡根據客觀資料與知識，形成推理或邏輯思考",
-                    "重視資料蒐集、分析與理解來解決複雜的問題",
-                    "能藉由研究與思考來解決問題，獲得極大成就感"
-                ],
-                blindSpots: [
-                    "因為太過理性認真，有時令人覺得過於冷漠、嚴謹。",
-                    "較少情感流露的一面，容易與他人產生距離感。",
-                    "明顯不足時，容易忽略實事求是、理性分析的重要性。"
-                ],
+                voices: ["「根據資料顯示...」", "「依照邏輯來說...」", "「這個現象背後的原理是...」"],
+                strengths: ["擁有像是一部高速處理器、高容量的電腦腦袋", "喜歡根據客觀資料與知識，形成推理或邏輯思考", "重視資料蒐集、分析與理解來解決複雜的問題", "能藉由研究與思考來解決問題，獲得極大成就感"],
+                blindSpots: ["因為太過理性認真，有時令人覺得過於冷漠、嚴謹。", "較少情感流露的一面，容易與他人產生距離感。", "明顯不足時，容易忽略實事求是、理性分析的重要性。"],
                 careers: ["軟體開發/程式工程師", "學術研究員/教授", "大數據分析員/金融分析", "醫師/藥師/鑑識人員", "心理測量/考古/人類學"],
                 reflectionQuestion: "最近有哪個未知的問題或現象，讓你產生好奇想要深入研究？"
             },
@@ -164,22 +146,9 @@
                 quote: "「看透人生的隱居智者，尋找生命意義的靈魂旅人。」",
                 color: "purple",
                 iconPath: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />',
-                voices: [
-                    "「做這件事情的意義是什麼？」",
-                    "「我有一種直覺...」",
-                    "旁人常說：「你想得真的好多喔！」"
-                ],
-                strengths: [
-                    "重視精神滿足大於物質需求",
-                    "擅長看見現象背後的「意義」",
-                    "具備連結不同層次的抽象思考力",
-                    "能敏銳觀察並理解他人的內在感受"
-                ],
-                blindSpots: [
-                    "太強調感受，忽略了客觀現實。",
-                    "過度鑽牛角尖，陷入情緒糾結。",
-                    "思考意義太久，反而停滯不前。"
-                ],
+                voices: ["「做這件事情的意義是什麼？」", "「我有一種直覺...」", "旁人常說：「你想得真的好多喔！」"],
+                strengths: ["重視精神滿足大於物質需求", "擅長看見現象背後的「意義」", "具備連結不同層次的抽象思考力", "能敏銳觀察並理解他人的內在感受"],
+                blindSpots: ["太強調感受，忽略了客觀現實。", "過度鑽牛角尖，陷入情緒糾結。", "思考意義太久，反而停滯不前。"],
                 careers: ["哲學/社會/心理學家", "身心靈工作者/諮商師", "宗教/教會服務", "生命禮儀/殯葬相關", "藝術/音樂/冒險治療", "命理/風水/占星"],
                 reflectionQuestion: "最近有哪件事讓你覺得「很有意義」？用一句話記錄下來。"
             },
@@ -315,7 +284,6 @@
             }
         ];
 
-        //  Tailwind 顏色配置對應表 (為了讓CDN引擎識別，必須完整寫出 class 名稱)
         const themeMap = {
             blue: { bg: 'bg-blue-900', border: 'border-blue-500', textLight: 'text-blue-300', textDark: 'text-blue-800', bgLight: 'bg-blue-50', borderLight: 'border-blue-100', iconBg: 'bg-blue-700', iconBorder: 'border-blue-400', bullet: 'text-blue-500', textMain: 'text-blue-700', bgTag: 'bg-blue-100', textTag: 'text-blue-800' },
             purple: { bg: 'bg-purple-900', border: 'border-purple-500', textLight: 'text-purple-300', textDark: 'text-purple-800', bgLight: 'bg-purple-50', borderLight: 'border-purple-100', iconBg: 'bg-purple-700', iconBorder: 'border-purple-400', bullet: 'text-purple-500', textMain: 'text-purple-700', bgTag: 'bg-purple-100', textTag: 'text-purple-800' },
@@ -334,103 +302,121 @@
         const renderPosterHTML = (item) => {
             const t = themeMap[item.color] || themeMap['slate'];
             
-            // 語錄渲染
+            // 語錄
             const voicesHTML = item.voices.map(voice => 
-                `<span class="bg-white px-4 py-2 rounded-full ${t.textMain} shadow-sm font-medium border border-gray-100">${voice}</span>`
+                `<span class="bg-white px-5 py-2.5 rounded-full ${t.textMain} shadow-sm font-bold border border-gray-100 text-[22px]">${voice}</span>`
             ).join('');
 
-            // 優勢渲染
+            // 優勢
             const strengthsHTML = item.strengths.map(strength => 
-                `<li class="flex items-start"><span class="${t.bullet} mr-2 mt-0.5">✦</span> <span>${strength}</span></li>`
+                `<li class="flex items-start leading-snug"><span class="${t.bullet} mr-3 mt-1.5 text-2xl">✦</span> <span>${strength}</span></li>`
             ).join('');
 
-            // 盲點渲染
+            // 盲點
             const blindSpotsHTML = item.blindSpots.map(bs => 
-                `<li class="flex items-start"><span class="text-orange-400 mr-2 mt-0.5">▸</span> <span>${bs}</span></li>`
+                `<li class="flex items-start leading-snug"><span class="text-orange-400 mr-3 mt-1.5 text-2xl">▸</span> <span>${bs}</span></li>`
             ).join('');
 
-            // 職業渲染
+            // 職業 (寬度調整，會自動折行)
             const careersHTML = item.careers.map(career => 
-                `<span class="${t.bgTag} ${t.textTag} px-3 py-1.5 rounded-md font-semibold">${career}</span>`
+                `<span class="${t.bgTag} ${t.textTag} px-4 py-2 rounded-lg font-bold text-[22px] shadow-sm">${career}</span>`
             ).join('');
 
             return `
-            <div class="poster-page text-${item.color}-900">
+            <div class="poster-page text-${item.color}-900 flex flex-col">
                 <div class="bg-pattern text-${item.color}-500"></div>
                 
                 <!-- 標題區塊 -->
-                <div class="${t.bg} text-white p-8 relative z-10 rounded-t-xl border-b-8 ${t.border}">
+                <div class="${t.bg} text-white px-10 py-7 relative z-10 rounded-t-xl border-b-8 ${t.border} flex-shrink-0">
                     <div class="flex items-center justify-between">
                         <div>
-                            <span class="${t.textLight} font-bold tracking-widest text-lg">TYPE ${item.id}</span>
-                            <h1 class="text-5xl font-black mt-2 tracking-wide">${item.name} <span class="text-3xl font-medium ${t.textLight} ml-2 opacity-80">${item.english}</span></h1>
-                            <p class="mt-4 text-white text-lg opacity-90">${item.quote}</p>
+                            <span class="${t.textLight} font-bold tracking-widest text-3xl">TYPE ${item.id}</span>
+                            <h1 class="text-6xl font-black mt-3 tracking-wide">${item.name} <span class="text-5xl font-medium ${t.textLight} ml-4 opacity-80">${item.english}</span></h1>
+                            <p class="mt-4 text-white text-2xl opacity-90">${item.quote}</p>
                         </div>
-                        <div class="w-24 h-24 ${t.iconBg} rounded-full flex items-center justify-center border-4 ${t.iconBorder} shadow-lg flex-shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <div class="w-32 h-32 ${t.iconBg} rounded-full flex items-center justify-center border-4 ${t.iconBorder} shadow-lg flex-shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 ${item.iconPath}
                             </svg>
                         </div>
                     </div>
                 </div>
 
-                <!-- 主要內容區 -->
-                <div class="flex-grow p-8 relative z-10 flex flex-col gap-6">
+                <!-- 核心內容區 (雙欄不對稱佈局 + 右側留白) -->
+                <div class="flex-grow px-10 py-6 relative z-10 flex flex-col gap-6">
                     
                     <!-- 共鳴語錄 -->
-                    <div class="${t.bgLight} rounded-lg p-5 border ${t.borderLight}">
-                        <h2 class="text-xl font-bold ${t.textDark} mb-3 flex items-center">
-                            <span class="mr-2">💬</span> 你的內心常出現這些聲音嗎？
+                    <div class="${t.bgLight} rounded-2xl p-6 border-2 ${t.borderLight}">
+                        <h2 class="text-3xl font-bold ${t.textDark} mb-4 flex items-center">
+                            <span class="mr-3">💬</span> 你的內心常出現這些聲音嗎？
                         </h2>
-                        <div class="flex flex-wrap gap-3">
+                        <div class="flex flex-wrap gap-4">
                             ${voicesHTML}
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-6">
-                        <!-- 核心特質 -->
-                        <div class="bg-white border-2 border-gray-100 rounded-xl p-5 shadow-sm">
-                            <h2 class="text-xl font-bold ${t.textDark} mb-3 border-b-2 ${t.borderLight} pb-2">✨ 你的超能力</h2>
-                            <ul class="space-y-2 text-gray-700 font-medium">
-                                ${strengthsHTML}
-                            </ul>
+                    <!-- 主要資訊：左寬 (超能力+盲點) / 右窄 (職業領域 + 留白) -->
+                    <div class="grid grid-cols-12 gap-8 flex-grow">
+                        
+                        <!-- 左側 8/12 比例：超能力與盲點 -->
+                        <div class="col-span-8 flex flex-col gap-6">
+                            <!-- 核心特質 -->
+                            <div class="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm flex-grow">
+                                <h2 class="text-3xl font-bold ${t.textDark} mb-4 border-b-2 ${t.borderLight} pb-3 flex items-center">
+                                    <span class="mr-3">✨</span> 你的超能力
+                                </h2>
+                                <ul class="space-y-4 text-gray-800 font-semibold text-[22px]">
+                                    ${strengthsHTML}
+                                </ul>
+                            </div>
+
+                            <!-- 盲點防空洞 -->
+                            <div class="bg-white border-2 border-orange-100 rounded-2xl p-6 shadow-sm flex-grow">
+                                <h2 class="text-3xl font-bold text-orange-600 mb-4 border-b-2 border-orange-100 pb-3 flex items-center">
+                                    <span class="mr-3">⚠️</span> 盲點防空洞
+                                </h2>
+                                <p class="text-gray-500 font-semibold mb-3 text-xl">當過度發揮時，你可能會：</p>
+                                <ul class="space-y-4 text-gray-800 font-semibold text-[22px]">
+                                    ${blindSpotsHTML}
+                                </ul>
+                            </div>
                         </div>
 
-                        <!-- 盲點防空洞 -->
-                        <div class="bg-white border-2 border-orange-100 rounded-xl p-5 shadow-sm">
-                            <h2 class="text-xl font-bold text-orange-600 mb-3 border-b-2 border-orange-100 pb-2">⚠️ 盲點防空洞</h2>
-                            <p class="text-gray-700 font-medium mb-2 text-sm">當過度發揮時，你可能會：</p>
-                            <ul class="space-y-2 text-gray-700">
-                                ${blindSpotsHTML}
-                            </ul>
+                        <!-- 右側 4/12 比例：方形職業領域 + 留白空間 -->
+                        <div class="col-span-4 flex flex-col">
+                            <!-- 窄方形職業區塊 -->
+                            <div class="bg-white border-2 ${t.borderLight} rounded-2xl p-6 shadow-sm h-full flex flex-col">
+                                <h2 class="text-3xl font-bold ${t.textDark} mb-4 border-b-2 ${t.borderLight} pb-3 flex items-center">
+                                    <span class="mr-2">🧭</span> 探索領域
+                                </h2>
+                                <!-- 調整flex讓標籤自然換行 -->
+                                <div class="flex flex-wrap gap-3 content-start flex-grow">
+                                    ${careersHTML}
+                                </div>
+                                <!-- 這裡就是創造 9*8 cm 視覺效果的彈性留白區塊 -->
+                                <div class="mt-auto pt-16 pb-8 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 opacity-60">
+                                    <span class="text-gray-400 font-medium text-lg tracking-widest">SPACE</span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- 職業領域 -->
-                    <div>
-                        <h2 class="text-xl font-bold ${t.textDark} mb-3 flex items-center">
-                            <span class="mr-2">🧭</span> 相關探索領域
-                        </h2>
-                        <div class="flex flex-wrap gap-2 text-sm">
-                            ${careersHTML}
-                        </div>
                     </div>
                 </div>
 
-                <!-- 互動任務區 -->
-                <div class="bg-yellow-50 border-t-4 border-yellow-400 p-6 relative z-10 mt-auto">
-                    <div class="flex items-start gap-4">
-                        <div class="bg-yellow-400 text-yellow-900 rounded-full w-12 h-12 flex items-center justify-center font-black text-xl flex-shrink-0">
+                <!-- 互動任務區 (防壓縮保護) -->
+                <div class="bg-yellow-50 border-t-4 border-yellow-400 px-10 py-7 relative z-10 flex-shrink-0 mt-auto">
+                    <div class="flex items-start gap-6">
+                        <div class="bg-yellow-400 text-yellow-900 rounded-full w-20 h-20 flex items-center justify-center font-black text-3xl flex-shrink-0 shadow-sm mt-1">
                             任務
                         </div>
-                        <div>
-                            <h3 class="font-bold text-yellow-800 text-lg mb-2">如果你在「${item.name}」得分最高，請在 A4 紙上寫下：</h3>
-                            <ol class="list-decimal list-inside text-gray-800 space-y-2 font-medium">
-                                <li>標題寫上大大的 <span class="${t.textMain} font-bold">「${item.id} ${item.name}」</span></li>
-                                <li>從「你的超能力」中，抄寫一句你最喜歡的特質。</li>
+                        <div class="flex-grow">
+                            <h3 class="font-bold text-yellow-800 text-3xl mb-4">如果你在「${item.name}」得分最高，請在自己的空白紙上寫下：</h3>
+                            <ol class="list-decimal list-inside text-gray-800 space-y-3 font-semibold text-[22px]">
+                                <li>標題寫上大大的 <span class="${t.textMain} font-bold text-[26px]">「${item.id} ${item.name}」</span></li>
+                                <li>從「超能力」中，抄寫一句你最喜歡的特質。</li>
                                 <li>從「盲點防空洞」中，寫下一個你需要時常提醒自己的盲點。</li>
-                                <li>從「相關探索領域」中，挑選 1~2 個你覺得最新奇或感興趣的職業。</li>
-                                <li><strong>思考題：</strong>${item.reflectionQuestion}</li>
+                                <li>從「相關探索領域」中，<span class="text-gray-900 font-bold">紀錄</span> 1~2 個你覺得最新奇或感興趣的職業。</li>
+                                <li class="leading-snug"><strong>思考題：</strong>${item.reflectionQuestion}</li>
                             </ol>
                         </div>
                     </div>
@@ -441,7 +427,6 @@
 
         const container = document.getElementById('app-container');
 
-        // 渲染指定的類型，或全部渲染
         window.renderSpecific = (val) => {
             container.innerHTML = '';
             if (val === 'all') {
@@ -456,8 +441,8 @@
             }
         };
 
-        // 初始載入 02 內省型 (預設選項)
-        renderSpecific('02');
+        // 預設載入字數最多的12型，供您直接檢驗任務區完整度
+        renderSpecific('12'); 
 
     </script>
 </body>
